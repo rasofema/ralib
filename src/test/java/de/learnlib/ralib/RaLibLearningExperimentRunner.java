@@ -150,24 +150,24 @@ public class RaLibLearningExperimentRunner {
 			}
 
 			int check = 0;
+			learner.startLearning();
 			while (true && check < 100) {
 				check++;
-				learner.learn();
-				Hypothesis hyp = learner.getHypothesis();
+				Hypothesis hyp = (Hypothesis) learner.getHypothesisModel();
 				ce = eqOracle.findCounterExample(hyp, null);
 				if (ce == null) {
 					break;
 				}
 				logger.log(Level.FINEST, "CE: {0}", ce);
 				assertCE(ce, true, hyp);
-				learner.addCounterexample(ce);
+				learner.refineHypothesis(ce);
 				measures.ces.add(ce.getInput());
 			}
 
 			measures.resets = ioCache.getQueryCount();
 
 			Assert.assertNull(ce);
-			Hypothesis hyp = learner.getHypothesis();
+			Hypothesis hyp = (Hypothesis) learner.getHypothesisModel();
 
 			logger.log(Level.FINE, "LAST:------------------------------------------------");
 			logger.log(Level.FINE, "FINAL HYP: {0}", hyp);

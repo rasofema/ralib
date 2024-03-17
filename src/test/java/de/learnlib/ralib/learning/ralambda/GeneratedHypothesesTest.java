@@ -61,8 +61,8 @@ public class GeneratedHypothesesTest extends RaLibTestSuite {
         RaLambda ralambda = new RaLambda(mto, hypFactory, slo, consts, false, false, I_PUSH, I_POP);
         ralambda.setSolver(solver);
 
-        ralambda.learn();
-        RegisterAutomaton hyp = ralambda.getHypothesis();
+        ralambda.startLearning();
+        RegisterAutomaton hyp = ralambda.getHypothesisModel();
 
         Assert.assertEquals(hyp.getClass(), Hypothesis.class);
     }

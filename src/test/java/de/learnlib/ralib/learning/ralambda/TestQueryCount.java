@@ -62,7 +62,7 @@ public class TestQueryCount extends RaLibTestSuite {
                 consts, true, sul.getActionSymbols());
         learner.setStatisticCounter(queryStats);
 
-        learner.learn();
+        learner.startLearning();
 
         Word<PSymbolInstance> ce1 = Word.fromSymbols(
         		new PSymbolInstance(PriorityQueueSUL.OFFER, new DataValue(PriorityQueueSUL.DOUBLE_TYPE, BigDecimal.ONE)),
@@ -74,8 +74,7 @@ public class TestQueryCount extends RaLibTestSuite {
 
         DefaultQuery<PSymbolInstance, Boolean> ceQuery = new DefaultQuery<>(ce1, false);
 
-        learner.addCounterexample(ceQuery);
-        learner.learn();
+        learner.refineHypothesis(ceQuery);
 
         long memQueries1 = learner.getQueryStatistics().getMemQueries();
         Assert.assertEquals(memQueries1, 2);
@@ -92,8 +91,7 @@ public class TestQueryCount extends RaLibTestSuite {
 
         ceQuery = new DefaultQuery<>(ce2, true);
 
-        learner.addCounterexample(ceQuery);
-        learner.learn();
+        learner.refineHypothesis(ceQuery);
 
         long memQueries2 = learner.getQueryStatistics().getMemQueries();
         Assert.assertEquals(memQueries2, 36);
@@ -110,8 +108,7 @@ public class TestQueryCount extends RaLibTestSuite {
 
         ceQuery = new DefaultQuery<>(ce3, true);
 
-        learner.addCounterexample(ceQuery);
-        learner.learn();
+        learner.refineHypothesis(ceQuery);
 
         long memQueries3 = learner.getQueryStatistics().getMemQueries();
         Assert.assertEquals(memQueries3, 44);

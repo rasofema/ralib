@@ -53,13 +53,12 @@ public class SULOracle extends IOOracle {
     @Override
     public Word<PSymbolInstance> trace(Word<PSymbolInstance> query) {
         countQueries(1);
-        Word<PSymbolInstance> act = query;
         log.trace(Category.QUERY, "MQ: {0}", query);
         sul.pre();
         replacements.clear();
         Word<PSymbolInstance> trace = Word.epsilon();
         for (int i = 0; i < query.length(); i += 2) {
-            PSymbolInstance in = applyReplacements(act.getSymbol(i));
+            PSymbolInstance in = applyReplacements(query.getSymbol(i));
 
             PSymbolInstance out = sul.step(in);
             updateReplacements(out);

@@ -222,18 +222,17 @@ public class IOHandlingTest extends RaLibTestSuite {
 
 		RaLambda ralambda = new RaLambda(mto, hypFactory, mlo, consts, true, IN, OK, NOK);
 
-		ralambda.learn();
+		ralambda.startLearning();
 
-		RegisterAutomaton hyp = ralambda.getHypothesis();
+		RegisterAutomaton hyp = ralambda.getHypothesisModel();
 		logger.log(Level.FINE, "HYP1: {0}", hyp);
 
 		Word<PSymbolInstance> ce = Word.fromSymbols(new PSymbolInstance(IN, new DataValue(ID, 0)),
 				new PSymbolInstance(OK), new PSymbolInstance(IN, new DataValue(ID, 1)), new PSymbolInstance(NOK));
 
-		ralambda.addCounterexample(new DefaultQuery<>(ce, model.accepts(ce)));
+		ralambda.refineHypothesis(new DefaultQuery<>(ce, model.accepts(ce)));
 
-		ralambda.learn();
-		hyp = ralambda.getHypothesis();
+		hyp = ralambda.getHypothesisModel();
 		logger.log(Level.FINE, "HYP2: {0}", hyp);
 		Assert.assertTrue(hyp.accepts(ce));
 		IOEquivalenceTest test = new IOEquivalenceTest(model, teachers, consts, true, IN, OK, NOK);
@@ -269,9 +268,9 @@ public class IOHandlingTest extends RaLibTestSuite {
 
 		RaLambda ralambda = new RaLambda(mto, hypFactory, mlo, consts, true, IN, NOK, OUT);
 
-		ralambda.learn();
+		ralambda.startLearning();
 
-		RegisterAutomaton hyp = ralambda.getHypothesis();
+		RegisterAutomaton hyp = ralambda.getHypothesisModel();
 		logger.log(Level.FINE, "HYP1: {0}", hyp);
 
 //		Word<PSymbolInstance> ce = Word.fromSymbols(new PSymbolInstance(IN, new DataValue(ID, 0)),
@@ -281,10 +280,9 @@ public class IOHandlingTest extends RaLibTestSuite {
 				new PSymbolInstance(OUT, new DataValue(ID, 0)), new PSymbolInstance(IN, new DataValue(ID, 1)),
 				new PSymbolInstance(NOK));
 
-		ralambda.addCounterexample(new DefaultQuery<>(ce, model.accepts(ce)));
+		ralambda.refineHypothesis(new DefaultQuery<>(ce, model.accepts(ce)));
 
-		ralambda.learn();
-		hyp = ralambda.getHypothesis();
+		hyp = ralambda.getHypothesisModel();
 		logger.log(Level.FINE, "HYP2: {0}", hyp);
 		Assert.assertTrue(hyp.accepts(ce));
 		IOEquivalenceTest test = new IOEquivalenceTest(model, teachers, consts, true, IN, NOK, OUT);
@@ -320,19 +318,18 @@ public class IOHandlingTest extends RaLibTestSuite {
 
 		RaLambda ralambda = new RaLambda(mto, hypFactory, mlo, consts, true, IN, NOK, OUT);
 
-		ralambda.learn();
+		ralambda.startLearning();
 
-		RegisterAutomaton hyp = ralambda.getHypothesis();
+		RegisterAutomaton hyp = ralambda.getHypothesisModel();
 		logger.log(Level.FINE, "HYP1: {0}", hyp);
 
 		Word<PSymbolInstance> ce = Word.fromSymbols(new PSymbolInstance(IN, new DataValue(ID, 0)),
 				new PSymbolInstance(OUT, new DataValue(ID, 1)), new PSymbolInstance(IN, new DataValue(ID, 1)),
 				new PSymbolInstance(NOK));
 
-		ralambda.addCounterexample(new DefaultQuery<>(ce, model.accepts(ce)));
+		ralambda.refineHypothesis(new DefaultQuery<>(ce, model.accepts(ce)));
 
-		ralambda.learn();
-		hyp = ralambda.getHypothesis();
+		hyp = ralambda.getHypothesisModel();
 		logger.log(Level.FINE, "HYP2: {0}", hyp);
 		Assert.assertTrue(hyp.accepts(ce));
 		IOEquivalenceTest test = new IOEquivalenceTest(model, teachers, consts, true, IN, NOK, OUT);

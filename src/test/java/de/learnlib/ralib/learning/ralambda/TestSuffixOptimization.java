@@ -69,7 +69,7 @@ public class TestSuffixOptimization extends RaLibTestSuite {
         learner.setStatisticCounter(queryStats);
         learner.setSolver(solver);
 
-        learner.learn();
+        learner.startLearning();
 
         Word<PSymbolInstance> ce = Word.fromSymbols(
         		new PSymbolInstance(IPUT, new DataValue(TINT, 0)),
@@ -79,10 +79,9 @@ public class TestSuffixOptimization extends RaLibTestSuite {
         		new PSymbolInstance(IPUT, new DataValue(TINT, 2)),
         		new PSymbolInstance(OECHO, new DataValue(TINT, 2)));
 
-        learner.addCounterexample(new DefaultQuery<PSymbolInstance, Boolean>(ce, false));
+        learner.refineHypothesis(new DefaultQuery<>(ce, false));
 
-        learner.learn();
-        Hypothesis hyp = learner.getHypothesis();
+        Hypothesis hyp = (Hypothesis) learner.getHypothesisModel();
 
         Assert.assertEquals(hyp.getStates().size(), 7);
 

@@ -66,8 +66,8 @@ public class LearnLoginTest extends RaLibTestSuite {
                 consts, I_LOGIN, I_LOGOUT, I_REGISTER);
         ralambda.setSolver(solver);
 
-        ralambda.learn();
-        RegisterAutomaton hyp = ralambda.getHypothesis();
+        ralambda.startLearning();
+        RegisterAutomaton hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "HYP1: {0}", hyp);
 
         Word<PSymbolInstance> ce = Word.fromSymbols(
@@ -76,10 +76,9 @@ public class LearnLoginTest extends RaLibTestSuite {
                 new PSymbolInstance(I_LOGIN,
                         new DataValue(T_UID, 0), new DataValue(T_PWD, 0)));
 
-        ralambda.addCounterexample(new DefaultQuery<>(ce, sul.accepts(ce)));
+        ralambda.refineHypothesis(new DefaultQuery<>(ce, sul.accepts(ce)));
 
-        ralambda.learn();
-        hyp = ralambda.getHypothesis();
+        hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "HYP2: {0}", hyp);
 
         Assert.assertEquals(hyp.getStates().size(), 3);

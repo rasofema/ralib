@@ -79,8 +79,8 @@ public class LearnLoginTest extends RaLibTestSuite {
         RaStar rastar = new RaStar(mto, hypFactory, slo,
                 consts, I_LOGIN, I_LOGOUT, I_REGISTER);
 
-        rastar.learn();
-        RegisterAutomaton hyp = rastar.getHypothesis();
+        rastar.startLearning();
+        RegisterAutomaton hyp = rastar.getHypothesisModel();
         logger.log(Level.FINE, "HYP1: {0}", hyp);
 
         Word<PSymbolInstance> ce = Word.fromSymbols(
@@ -89,10 +89,9 @@ public class LearnLoginTest extends RaLibTestSuite {
                 new PSymbolInstance(I_LOGIN,
                         new DataValue(T_UID, 1), new DataValue(T_PWD, 1)));
 
-        rastar.addCounterexample(new DefaultQuery<>(ce, sul.accepts(ce)));
+        rastar.refineHypothesis(new DefaultQuery<>(ce, sul.accepts(ce)));
 
-        rastar.learn();
-        hyp = rastar.getHypothesis();
+        hyp = rastar.getHypothesisModel();
         logger.log(Level.FINE, "HYP2: {0}", hyp);
 
         Assert.assertEquals(hyp.getStates().size(), 3);

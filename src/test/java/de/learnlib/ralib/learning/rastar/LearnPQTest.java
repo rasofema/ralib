@@ -75,8 +75,8 @@ public class LearnPQTest extends RaLibTestSuite {
                 new MultiTheoryTreeOracle(new SimulatorOracle(hyp), teachers, new Constants(), jsolv);
 
         RaStar rastar = new RaStar(mto, hypFactory, mlo, consts, OFFER, POLL);
-        rastar.learn();
-        RegisterAutomaton hyp = rastar.getHypothesis();
+        rastar.startLearning();
+        RegisterAutomaton hyp = rastar.getHypothesisModel();
         logger.log(Level.FINE, "HYP1: {0}", hyp);
 
         Word<PSymbolInstance> ce = Word.fromSymbols(
@@ -94,10 +94,9 @@ public class LearnPQTest extends RaLibTestSuite {
         DefaultQuery<PSymbolInstance, Boolean> ceQuery = new DefaultQuery(ce);
         dwOracle.processQueries(Collections.singleton(ceQuery));
 
-        rastar.addCounterexample(ceQuery);
+        rastar.refineHypothesis(ceQuery);
 
-        rastar.learn();
-        hyp = rastar.getHypothesis();
+        hyp = rastar.getHypothesisModel();
         logger.log(Level.FINE, "HYP2: {0}", hyp);
 
         Assert.assertEquals(hyp.getStates().size(), 7);

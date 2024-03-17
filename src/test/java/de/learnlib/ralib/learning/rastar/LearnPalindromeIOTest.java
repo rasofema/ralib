@@ -101,11 +101,11 @@ public class LearnPalindromeIOTest extends RaLibTestSuite {
                 model, teachers, consts, true, actions);
 
         int check = 0;
+        rastar.startLearning();
         while (true && check < 10) {
 
             check++;
-            rastar.learn();
-            Hypothesis hyp = rastar.getHypothesis();
+            Hypothesis hyp = (Hypothesis) rastar.getHypothesisModel();
             logger.log(Level.FINE, "HYP: {0}", hyp);
 
 
@@ -120,10 +120,10 @@ public class LearnPalindromeIOTest extends RaLibTestSuite {
             Assert.assertTrue(model.accepts(ce.getInput()));
             Assert.assertTrue(!hyp.accepts(ce.getInput()));
 
-            rastar.addCounterexample(ce);
+            rastar.refineHypothesis(ce);
         }
 
-        RegisterAutomaton hyp = rastar.getHypothesis();
+        RegisterAutomaton hyp = rastar.getHypothesisModel();
         logger.log(Level.FINE, "FINAL HYP: {0}", hyp);
         DefaultQuery<PSymbolInstance, Boolean> ce =
             ioEquiv.findCounterExample(hyp, null);

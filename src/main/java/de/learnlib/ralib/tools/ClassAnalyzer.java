@@ -310,11 +310,11 @@ public class ClassAnalyzer extends AbstractToolWithRandomWalk {
         Hypothesis hyp = null;
 
         int rounds = 0;
+        rastar.startLearning();
         while (maxRounds < 0 || rounds < maxRounds) {
 
             rounds++;
-            rastar.learn();
-            hyp = rastar.getHypothesis();
+            hyp = (Hypothesis) rastar.getHypothesisModel();
             System.out.println("HYP:------------------------------------------------");
             System.out.println(hyp);
             System.out.println("----------------------------------------------------");
@@ -361,7 +361,7 @@ public class ClassAnalyzer extends AbstractToolWithRandomWalk {
             System.out.println("### HYP TRACE: " + hypTrace);
 
             assert !hypTrace.equals(sysTrace);
-            rastar.addCounterexample(ce);
+            rastar.refineHypothesis(ce);
         }
 
         System.out.println("=============================== STOP ===============================");

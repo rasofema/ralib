@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import de.learnlib.logging.Category;
 import de.learnlib.query.DefaultQuery;
+import de.learnlib.ralib.automata.RegisterAutomaton;
 import de.learnlib.ralib.data.Constants;
 import de.learnlib.ralib.learning.AutomatonBuilder;
 import de.learnlib.ralib.learning.CounterexampleAnalysis;
@@ -107,40 +108,6 @@ public class RaStar implements RaLearningAlgorithm {
         this(oracle, hypOracleFactory, sdtLogicOracle, consts, false, inputs);
     }
 
-    @Override
-    public void learn() {
-        if (hyp != null) {
-            analyzeCounterExample();
-        }
-
-        do {
-            LOGGER.info(Category.PHASE, "completing observation table");
-            while(! obs.complete()) {};
-            LOGGER.info(Category.PHASE, "completed observation table");
-
-            //System.out.println(obs.toString());
-
-            Map<Word<PSymbolInstance>, LocationComponent> components = new LinkedHashMap<Word<PSymbolInstance>, LocationComponent>();
-            components.putAll(obs.getComponents());
-            AutomatonBuilder ab = new AutomatonBuilder(components, consts);
-            hyp = ab.toRegisterAutomaton();
-
-            //FIXME: the default logging appender cannot log models and data structures
-            //System.out.println(hyp.toString());
-            LOGGER.info(Category.MODEL, "{}", hyp);
-
-        } while (analyzeCounterExample());
-
-        if (queryStats != null)
-        	queryStats.hypothesisConstructed();
-    }
-
-    @Override
-    public void addCounterexample(DefaultQuery<PSymbolInstance, Boolean> ce) {
-        LOGGER.info(Category.EVENT, "adding counterexample: {}", ce);
-        counterexamples.add(ce);
-    }
-
     private boolean analyzeCounterExample() {
         LOGGER.info(Category.PHASE, "Analyzing Counterexample");
         if (counterexamples.isEmpty()) {
@@ -181,17 +148,6 @@ public class RaStar implements RaLearningAlgorithm {
         return true;
     }
 
-    @Override
-    public Hypothesis getHypothesis() {
-    	Map<Word<PSymbolInstance>, LocationComponent> components = new LinkedHashMap<Word<PSymbolInstance>, LocationComponent>();
-    	components.putAll(obs.getComponents());
-        AutomatonBuilder ab = new AutomatonBuilder(components, consts);
-        if (ioMode) {
-            ab = new IOAutomatonBuilder(components, consts);
-        }
-        return ab.toRegisterAutomaton();
-    }
-
     // TODO: this should not be a public method permanently!
     public Map<Word<PSymbolInstance>, LocationComponent> getComponents() {
         Map<Word<PSymbolInstance>, LocationComponent> components = new LinkedHashMap<Word<PSymbolInstance>, LocationComponent>();
@@ -212,5 +168,73 @@ public class RaStar implements RaLearningAlgorithm {
     @Override
     public RaLearningAlgorithmName getName() {
         return RaLearningAlgorithmName.RASTAR;
+    }
+
+    @Override
+    public void startLearning() {
+        do {
+            LOGGER.info(Category.PHASE, "completing observation table");
+            while(! obs.complete()) {};
+            LOGGER.info(Category.PHASE, "completed observation table");
+
+            //System.out.println(obs.toString());
+
+            Map<Word<PSymbolInstance>, LocationComponent> components = new LinkedHashMap<Word<PSymbolInstance>, LocationComponent>();
+            components.putAll(obs.getComponents());
+            AutomatonBuilder ab = new AutomatonBuilder(components, consts);
+            hyp = ab.toRegisterAutomaton();
+
+            //FIXME: the default logging appender cannot log models and data structures
+            //System.out.println(hyp.toString());
+            LOGGER.info(Category.MODEL, "{}", hyp);
+
+        } while (analyzeCounterExample());
+
+        if (queryStats != null)
+            queryStats.hypothesisConstructed();
+    }
+
+    @Override
+    public boolean refineHypothesis(DefaultQuery<PSymbolInstance, Boolean> ce) {
+        LOGGER.info(Category.EVENT, "adding counterexample: {}", ce);
+        counterexamples.add(ce);
+
+        if (hyp != null) {
+            analyzeCounterExample();
+        }
+
+        do {
+            LOGGER.info(Category.PHASE, "completing observation table");
+            while(! obs.complete()) {};
+            LOGGER.info(Category.PHASE, "completed observation table");
+
+            //System.out.println(obs.toString());
+
+            Map<Word<PSymbolInstance>, LocationComponent> components = new LinkedHashMap<Word<PSymbolInstance>, LocationComponent>();
+            components.putAll(obs.getComponents());
+            AutomatonBuilder ab = new AutomatonBuilder(components, consts);
+            hyp = ab.toRegisterAutomaton();
+
+            //FIXME: the default logging appender cannot log models and data structures
+            //System.out.println(hyp.toString());
+            LOGGER.info(Category.MODEL, "{}", hyp);
+
+        } while (analyzeCounterExample());
+
+        if (queryStats != null)
+            queryStats.hypothesisConstructed();
+
+        return true;
+    }
+
+    @Override
+    public RegisterAutomaton getHypothesisModel() {
+        Map<Word<PSymbolInstance>, LocationComponent> components = new LinkedHashMap<Word<PSymbolInstance>, LocationComponent>();
+        components.putAll(obs.getComponents());
+        AutomatonBuilder ab = new AutomatonBuilder(components, consts);
+        if (ioMode) {
+            ab = new IOAutomatonBuilder(components, consts);
+        }
+        return ab.toRegisterAutomaton();
     }
 }

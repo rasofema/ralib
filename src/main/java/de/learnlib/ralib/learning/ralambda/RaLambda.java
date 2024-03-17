@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import de.learnlib.logging.Category;
 import de.learnlib.query.DefaultQuery;
+import de.learnlib.ralib.automata.RegisterAutomaton;
 import de.learnlib.ralib.automata.TransitionGuard;
 import de.learnlib.ralib.ceanalysis.PrefixFinder;
 import de.learnlib.ralib.data.Constants;
@@ -26,7 +27,6 @@ import de.learnlib.ralib.dt.MappedPrefix;
 import de.learnlib.ralib.dt.ShortPrefix;
 import de.learnlib.ralib.learning.AutomatonBuilder;
 import de.learnlib.ralib.learning.CounterexampleAnalysis;
-import de.learnlib.ralib.learning.Hypothesis;
 import de.learnlib.ralib.learning.IOAutomatonBuilder;
 import de.learnlib.ralib.learning.LocationComponent;
 import de.learnlib.ralib.learning.QueryStatistics;
@@ -115,25 +115,6 @@ public class RaLambda implements RaLearningAlgorithm {
         this(oracle, hypOracleFactory, sdtLogicOracle, consts, false, false, inputs);
     }
 
-    @Override
-    public void addCounterexample(DefaultQuery<PSymbolInstance, Boolean> ce) {
-        LOGGER.info(Category.EVENT, "adding counterexample: {}", ce);
-        counterexamples.add(ce);
-    }
-
-    @Override
-    public void learn() {
-
-        if (hyp == null) {
-            buildNewHypothesis();
-        }
-
-        while (analyzeCounterExample());
-
-        if (queryStats != null)
-        	queryStats.hypothesisConstructed();
-
-    }
 
     private void buildNewHypothesis() {
 
@@ -505,19 +486,6 @@ public class RaLambda implements RaLearningAlgorithm {
         return true;
     }
 
-    @Override
-    public Hypothesis getHypothesis() {
-        Map<Word<PSymbolInstance>, LocationComponent> components = new LinkedHashMap<Word<PSymbolInstance>, LocationComponent>();
-        components.putAll(dt.getComponents());
-        AutomatonBuilder ab;
-        if (ioMode) {
-            ab = new IOAutomatonBuilder(components, consts);
-        } else {
-            ab = new AutomatonBuilder(components, consts);
-        }
-        return ab.toRegisterAutomaton();
-    }
-
     public DT getDT() {
         return dt;
     }
@@ -552,5 +520,39 @@ public class RaLambda implements RaLearningAlgorithm {
     @Override
     public String toString() {
         return dt.toString();
+    }
+
+    @Override
+    public void startLearning() {
+        if (hyp == null) {
+            buildNewHypothesis();
+        }
+
+    }
+
+    @Override
+    public boolean refineHypothesis(DefaultQuery<PSymbolInstance, Boolean> ce) {
+        LOGGER.info(Category.EVENT, "adding counterexample: {}", ce);
+        counterexamples.add(ce);
+
+        while (analyzeCounterExample());
+
+        if (queryStats != null)
+            queryStats.hypothesisConstructed();
+
+        return true;
+    }
+
+    @Override
+    public RegisterAutomaton getHypothesisModel() {
+        Map<Word<PSymbolInstance>, LocationComponent> components = new LinkedHashMap<Word<PSymbolInstance>, LocationComponent>();
+        components.putAll(dt.getComponents());
+        AutomatonBuilder ab;
+        if (ioMode) {
+            ab = new IOAutomatonBuilder(components, consts);
+        } else {
+            ab = new AutomatonBuilder(components, consts);
+        }
+        return ab.toRegisterAutomaton();
     }
 }

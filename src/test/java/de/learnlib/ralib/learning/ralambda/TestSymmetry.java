@@ -75,18 +75,17 @@ public class TestSymmetry extends RaLibTestSuite {
 		RaLambda learner = new RaLambda(mto, hypFactory, slo, consts, false, false, A, B);
 		learner.setSolver(solver);
 
-		learner.learn();
+		learner.startLearning();
 
 		Word<PSymbolInstance> ce = Word.fromSymbols(
 				new PSymbolInstance(A, new DataValue(T_INT, 1)),
 				new PSymbolInstance(A, new DataValue(T_INT, 2)),
 				new PSymbolInstance(A, new DataValue(T_INT, 1)));
 
-		learner.addCounterexample(new DefaultQuery<>(ce, true));
-		learner.learn();
+		learner.refineHypothesis(new DefaultQuery<>(ce, true));
 
-		Hypothesis hyp = learner.getHypothesis();
-		System.out.println(learner.getHypothesis().toString());
+		Hypothesis hyp = (Hypothesis) learner.getHypothesisModel();
+		System.out.println(learner.getHypothesisModel().toString());
 		System.out.println(learner.getDT());
 
 		ce = Word.fromSymbols(
@@ -100,10 +99,9 @@ public class TestSymmetry extends RaLibTestSuite {
 		System.out.println(sul.accepts(ce));
 		System.out.println(hyp.accepts(ce));
 
-		learner.addCounterexample(new DefaultQuery<>(ce, true));
-		learner.learn();
+		learner.refineHypothesis(new DefaultQuery<>(ce, true));
 
-		System.out.println(learner.getHypothesis().toString());
+		System.out.println(learner.getHypothesisModel().toString());
 		System.out.println(learner.getDT());
 		Assert.assertTrue(learner.getDTHyp().accepts(ce));
 	}
@@ -212,7 +210,7 @@ public class TestSymmetry extends RaLibTestSuite {
         RaLambda learner = new RaLambda(mto, hypFactory, slo, consts, false, false, A, B);
         learner.setSolver(solver);
 
-        learner.learn();
+        learner.startLearning();
 
         Word<PSymbolInstance> ce = Word.fromSymbols(
         		new PSymbolInstance(A, new DataValue(T_INT, 1)),
@@ -220,11 +218,10 @@ public class TestSymmetry extends RaLibTestSuite {
         		new PSymbolInstance(B, new DataValue(T_INT, 1)),
         		new PSymbolInstance(B, new DataValue(T_INT, 2)));
 
-        learner.addCounterexample(new DefaultQuery<>(ce, true));
-        learner.learn();
+        learner.refineHypothesis(new DefaultQuery<>(ce,true));
 
-        Hypothesis hyp = learner.getHypothesis();
-        System.out.println(learner.getHypothesis().toString());
+        Hypothesis hyp = (Hypothesis) learner.getHypothesisModel();
+        System.out.println(learner.getHypothesisModel().toString());
 
         ce = Word.fromSymbols(
         		new PSymbolInstance(A, new DataValue(T_INT, 1)),

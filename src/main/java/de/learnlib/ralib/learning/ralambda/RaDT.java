@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import de.learnlib.logging.Category;
 import de.learnlib.query.DefaultQuery;
+import de.learnlib.ralib.automata.RegisterAutomaton;
 import de.learnlib.ralib.data.Constants;
 import de.learnlib.ralib.dt.DT;
 import de.learnlib.ralib.dt.DTHyp;
@@ -71,19 +72,6 @@ public class RaDT implements RaLearningAlgorithm {
         hyp = (DTHyp) ab.toRegisterAutomaton();
     }
 
-	@Override
-	public void learn() {
-        if (hyp == null) {
-            buildHypothesis();
-        }
-
-        while (analyzeCounterExample());
-
-        if (queryStats != null) {
-        	queryStats.hypothesisConstructed();
-        }
-	}
-
     private boolean analyzeCounterExample() {
         LOGGER.info(Category.PHASE, "Analyzing Counterexample");
         if (counterexamples.isEmpty()) {
@@ -128,13 +116,6 @@ public class RaDT implements RaLearningAlgorithm {
         return true;
     }
 
-	@Override
-	public void addCounterexample(DefaultQuery<PSymbolInstance, Boolean> ce) {
-        LOGGER.info(Category.EVENT, "adding counterexample: " + ce);
-        counterexamples.add(ce);
-    }
-
-	@Override
 	public Hypothesis getHypothesis() {
         Map<Word<PSymbolInstance>, LocationComponent> components = new LinkedHashMap<Word<PSymbolInstance>, LocationComponent>();
         components.putAll(dt.getComponents());
@@ -166,4 +147,34 @@ public class RaDT implements RaLearningAlgorithm {
 		return RaLearningAlgorithmName.RADT;
 	}
 
+    @Override
+    public void startLearning() {
+        if (hyp == null) {
+            buildHypothesis();
+        }
+    }
+
+    @Override
+    public boolean refineHypothesis(DefaultQuery<PSymbolInstance, Boolean> ce) {
+        LOGGER.info(Category.EVENT, "adding counterexample: " + ce);
+        counterexamples.add(ce);
+        while (analyzeCounterExample());
+
+        if (queryStats != null) {
+            queryStats.hypothesisConstructed();
+        }
+        return true;
+    }
+
+    @Override
+    public RegisterAutomaton getHypothesisModel() {
+        Map<Word<PSymbolInstance>, LocationComponent> components = new LinkedHashMap<>(dt.getComponents());
+        AutomatonBuilder ab;
+        if (ioMode) {
+            ab = new IOAutomatonBuilder(components, consts);
+        } else {
+            ab = new AutomatonBuilder(components, consts);
+        }
+        return ab.toRegisterAutomaton();
+    }
 }

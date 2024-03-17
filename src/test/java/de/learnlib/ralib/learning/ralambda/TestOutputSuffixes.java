@@ -79,7 +79,7 @@ public class TestOutputSuffixes extends RaLibTestSuite {
                 new MultiTheoryTreeOracle(new SimulatorOracle(hyp), teachers, consts, solver);
 
         RaDT radt = new RaDT(mto, hypFactory, mlo, consts, true, actions);
-        radt.learn();
+        radt.startLearning();
 
         String ces[] = {"IINVITE[1[int]] O100[1[int]] / true",
         		"IINVITE[0[int]] O100[0[int]] IPRACK[0[int]] O200[0[int]] / true"};
@@ -87,8 +87,7 @@ public class TestOutputSuffixes extends RaLibTestSuite {
         Deque<DefaultQuery<PSymbolInstance, Boolean>> ceQueue = TestUnknownMemorable.buildSIPCEs(ces, actions);
 
         while (!ceQueue.isEmpty()) {
-        	radt.addCounterexample(ceQueue.pop());
-        	radt.learn();
+        	radt.refineHypothesis(ceQueue.pop());
         }
 
         Set<ParameterizedSymbol> outputs = Sets.difference(Set.of(actions), Set.of(inputs));

@@ -82,8 +82,8 @@ public class LearnPQTest extends RaLibTestSuite {
 
         RaLambda rastar = new RaLambda(mto, hypFactory, mlo, consts, OFFER, POLL);
 //        rastar.setUseOldAnalyzer(true);
-        rastar.learn();
-        RegisterAutomaton hyp = rastar.getHypothesis();
+        rastar.startLearning();
+        RegisterAutomaton hyp = rastar.getHypothesisModel();
         logger.log(Level.FINE, "HYP1: {0}", hyp);
 
         Word<PSymbolInstance> ce = Word.fromSymbols(
@@ -98,10 +98,9 @@ public class LearnPQTest extends RaLibTestSuite {
 
         DefaultQuery<PSymbolInstance, Boolean> ceQuery = new DefaultQuery<>(ce, true);
 
-        rastar.addCounterexample(ceQuery);
+        rastar.refineHypothesis(ceQuery);
 
-        rastar.learn();
-        hyp = rastar.getHypothesis();
+        hyp = rastar.getHypothesisModel();
         logger.log(Level.FINE, "HYP2: {0}", hyp);
 
         Assert.assertTrue(hyp.accepts(ceQuery.getInput()));
@@ -116,9 +115,8 @@ public class LearnPQTest extends RaLibTestSuite {
                 new PSymbolInstance(POLL,
                         new DataValue(doubleType, BigDecimal.valueOf(2.0))));
         DefaultQuery<PSymbolInstance, Boolean> ce2Query = new DefaultQuery<>(ce2, true);
-        rastar.addCounterexample(ce2Query);
-        rastar.learn();
-        hyp = rastar.getHypothesis();
+        rastar.refineHypothesis(ce2Query);
+        hyp = rastar.getHypothesisModel();
         logger.log(Level.FINE, "HYP3: {0}", hyp);
 
         Assert.assertTrue(hyp.accepts(ce2Query.getInput()));

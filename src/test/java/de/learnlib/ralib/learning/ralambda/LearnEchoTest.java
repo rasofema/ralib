@@ -60,7 +60,7 @@ public class LearnEchoTest extends RaLibTestSuite {
                 new MultiTheoryTreeOracle(new SimulatorOracle(hyp), teachers, consts, solver);
 
         RaLambda learner = new RaLambda(mto, hypFactory, mlo, consts, true, sul.getActionSymbols());
-        learner.learn();
+        learner.startLearning();
 
         Word<PSymbolInstance> ce = Word.fromSymbols(
        	        new PSymbolInstance(IPUT, new DataValue(TINT, 0)),
@@ -74,10 +74,9 @@ public class LearnEchoTest extends RaLibTestSuite {
        	        new PSymbolInstance(IPUT, new DataValue(TINT, 4)),
        	        new PSymbolInstance(ONOK));
 
-        learner.addCounterexample(new DefaultQuery<>(ce, true));
-        learner.learn();
+        learner.refineHypothesis(new DefaultQuery<>(ce, true));
 
-        Hypothesis hyp = learner.getHypothesis();
+        Hypothesis hyp = (Hypothesis) learner.getHypothesisModel();
 
         Assert.assertEquals(hyp.getStates().size(), 11);
         Assert.assertTrue(hyp.accepts(ce));

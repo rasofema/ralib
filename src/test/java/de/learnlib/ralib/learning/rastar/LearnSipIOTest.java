@@ -116,11 +116,11 @@ public class LearnSipIOTest extends RaLibTestSuite {
         IOCounterExamplePrefixFinder pref = new IOCounterExamplePrefixFinder(ioOracle);
 
         int check = 0;
+        rastar.startLearning();
         while (true && check < 100) {
 
             check++;
-            rastar.learn();
-            Hypothesis hyp = rastar.getHypothesis();
+            Hypothesis hyp = (Hypothesis) rastar.getHypothesisModel();
 
             DefaultQuery<PSymbolInstance, Boolean> ce =
                     ioEquiv.findCounterExample(hyp, null);
@@ -136,10 +136,10 @@ public class LearnSipIOTest extends RaLibTestSuite {
             Assert.assertTrue(model.accepts(ce.getInput()));
             Assert.assertTrue(!hyp.accepts(ce.getInput()));
 
-            rastar.addCounterexample(ce);
+            rastar.refineHypothesis(ce);
         }
 
-        RegisterAutomaton hyp = rastar.getHypothesis();
+        RegisterAutomaton hyp = rastar.getHypothesisModel();
         logger.log(Level.FINE, "FINAL HYP: {0}", hyp);
         DefaultQuery<PSymbolInstance, Boolean> ce =
             ioEquiv.findCounterExample(hyp, null);

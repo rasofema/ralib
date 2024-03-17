@@ -104,10 +104,10 @@ public class LearnPQIOTest extends RaLibTestSuite {
         IOCounterExamplePrefixFinder pref = new IOCounterExamplePrefixFinder(ioOracle);
 
         int check = 0;
+        rastar.startLearning();
         while (true && check < 100) {
             check++;
-            rastar.learn();
-            Hypothesis hyp = rastar.getHypothesis();
+            Hypothesis hyp = (Hypothesis) rastar.getHypothesisModel();
 
             DefaultQuery<PSymbolInstance, Boolean> ce
                     = iowalk.findCounterExample(hyp, null);
@@ -120,10 +120,10 @@ public class LearnPQIOTest extends RaLibTestSuite {
             ce = loops.optimizeCE(ce.getInput(), hyp);
             ce = asrep.optimizeCE(ce.getInput(), hyp);
             ce = pref.optimizeCE(ce.getInput(), hyp);
-            rastar.addCounterexample(ce);
+            rastar.refineHypothesis(ce);
         }
 
-        RegisterAutomaton hyp = rastar.getHypothesis();
+        RegisterAutomaton hyp = rastar.getHypothesisModel();
         RegisterAutomatonImporter imp = TestUtil.getLoader(
                 "/de/learnlib/ralib/automata/xml/pq3.xml");
 

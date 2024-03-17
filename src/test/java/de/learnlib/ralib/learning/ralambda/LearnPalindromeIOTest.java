@@ -82,11 +82,11 @@ public class LearnPalindromeIOTest extends RaLibTestSuite {
                 model, teachers, consts, true, actions);
 
         int check = 0;
+        ralambda.startLearning();
         while (true && check < 10) {
 
             check++;
-            ralambda.learn();
-            Hypothesis hyp = ralambda.getHypothesis();
+            Hypothesis hyp = (Hypothesis) ralambda.getHypothesisModel();
             logger.log(Level.FINE, "HYP: {0}", hyp);
 
 
@@ -101,10 +101,10 @@ public class LearnPalindromeIOTest extends RaLibTestSuite {
             Assert.assertTrue(model.accepts(ce.getInput()));
             Assert.assertTrue(!hyp.accepts(ce.getInput()));
 
-            ralambda.addCounterexample(ce);
+            ralambda.refineHypothesis(ce);
         }
 
-        RegisterAutomaton hyp = ralambda.getHypothesis();
+        RegisterAutomaton hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "FINAL HYP: {0}", hyp);
         DefaultQuery<PSymbolInstance, Boolean> ce =
             ioEquiv.findCounterExample(hyp, null);

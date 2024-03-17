@@ -178,7 +178,7 @@ public class AutomatonBuilder {
         Transition  t = createTransition(action, guard, src_loc, dest_loc, assign);
         if (t != null) {
             LOGGER.debug(Category.EVENT, "computed transition {0}", t);
-            this.automaton.addTransition(src_loc, action, t);
+            this.automaton.addTransition(src_loc, new PSymbolInstance(action), t);
             this.automaton.setTransitionSequence(t, r.getPrefix());
         }
     }

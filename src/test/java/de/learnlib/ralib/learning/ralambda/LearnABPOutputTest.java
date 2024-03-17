@@ -112,11 +112,11 @@ public class LearnABPOutputTest extends RaLibTestSuite {
         		inputs);
 
         int check = 0;
+        ralambda.startLearning();
         while (true && check < 100) {
 
             check++;
-            ralambda.learn();
-            Hypothesis hyp = ralambda.getHypothesis();
+            Hypothesis hyp = (Hypothesis) ralambda.getHypothesisModel();
 
             ce = null;
 
@@ -146,12 +146,12 @@ public class LearnABPOutputTest extends RaLibTestSuite {
             }
 
             Assert.assertTrue(model.accepts(ce.getInput()));
-            Assert.assertTrue(!hyp.accepts(ce.getInput()));
+            Assert.assertFalse(hyp.accepts(ce.getInput()));
 
-            ralambda.addCounterexample(ce);
+            ralambda.refineHypothesis(ce);
         }
 
-        RegisterAutomaton hyp = ralambda.getHypothesis();
+        RegisterAutomaton hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "FINAL HYP: {0}", hyp);
         ce = ioEquiv.findCounterExample(hyp, null);
 

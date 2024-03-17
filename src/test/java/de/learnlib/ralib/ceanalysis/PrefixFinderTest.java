@@ -80,8 +80,8 @@ public class PrefixFinderTest extends RaLibTestSuite {
         RaStar rastar = new RaStar(mto, hypFactory, slo,
                 consts, I_LOGIN, I_LOGOUT, I_REGISTER);
 
-        rastar.learn();
-        final Hypothesis hyp = rastar.getHypothesis();
+        rastar.startLearning();
+        final Hypothesis hyp = (Hypothesis) rastar.getHypothesisModel();
         logger.log(Level.FINE, "HYP1: {0}", hyp);
         System.out.println(hyp);
 
@@ -124,7 +124,7 @@ public class PrefixFinderTest extends RaLibTestSuite {
         RaLambda ralambda = new RaLambda(mto, hypFactory, slo,
         		consts, I_PUSH, I_POP);
 
-        ralambda.learn();
+        ralambda.startLearning();
         final DTHyp hyp = ralambda.getDTHyp();
         logger.log(Level.FINE, "HYP1: {0}", hyp);
         System.out.println(hyp);

@@ -72,18 +72,17 @@ public class LearnStackTest extends RaLibTestSuite {
         RaLambda ralambda = new RaLambda(mto, hypFactory, slo, consts, false, false, I_PUSH, I_POP);
         ralambda.setSolver(solver);
 
-        ralambda.learn();
-        RegisterAutomaton hyp = ralambda.getHypothesis();
+        ralambda.startLearning();
+        RegisterAutomaton hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "HYP0: {0}", hyp);
 
         Word<PSymbolInstance> ce = Word.fromSymbols(
         		new PSymbolInstance(I_PUSH, new DataValue(T_INT, 0)),
         		new PSymbolInstance(I_POP, new DataValue(T_INT, 0)));
 
-        ralambda.addCounterexample(new DefaultQuery<>(ce, sul.accepts(ce)));
+        ralambda.refineHypothesis(new DefaultQuery<>(ce, sul.accepts(ce)));
 
-        ralambda.learn();
-        hyp = ralambda.getHypothesis();
+        hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "HYP1: {0}", hyp);
 
         ce = Word.fromSymbols(
@@ -91,10 +90,9 @@ public class LearnStackTest extends RaLibTestSuite {
         		new PSymbolInstance(I_PUSH, new DataValue(T_INT, 1)),
         		new PSymbolInstance(I_PUSH, new DataValue(T_INT, 2)));
 
-        ralambda.addCounterexample(new DefaultQuery<>(ce, sul.accepts(ce)));
+        ralambda.refineHypothesis(new DefaultQuery<>(ce, sul.accepts(ce)));
 
-        ralambda.learn();
-        hyp = ralambda.getHypothesis();
+        hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "HYP2: {0}", hyp);
 
         Assert.assertEquals(hyp.getStates().size(), 4);
@@ -124,10 +122,10 @@ public class LearnStackTest extends RaLibTestSuite {
         RaLambda ralambda = new RaLambda(mto, hypFactory, slo, consts, false, false, I_PUSH, I_POP);
         ralambda.setSolver(solver);
 
-        ralambda.learn();
-        RegisterAutomaton hyp = ralambda.getHypothesis();
+        ralambda.startLearning();
+        RegisterAutomaton hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "HYP0: {0}", hyp);
-        hyp = ralambda.getHypothesis();
+        hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "HYP1: {0}", hyp);
 
         Word<PSymbolInstance> ce = Word.fromSymbols(
@@ -135,20 +133,18 @@ public class LearnStackTest extends RaLibTestSuite {
         		new PSymbolInstance(I_PUSH, new DataValue(T_INT, 1)),
         		new PSymbolInstance(I_PUSH, new DataValue(T_INT, 2)));
 
-        ralambda.addCounterexample(new DefaultQuery<>(ce, sul.accepts(ce)));
+        ralambda.refineHypothesis(new DefaultQuery<>(ce, sul.accepts(ce)));
 
-        ralambda.learn();
-        hyp = ralambda.getHypothesis();
+        hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "HYP2: {0}", hyp);
 
         ce = Word.fromSymbols(
         		new PSymbolInstance(I_PUSH, new DataValue(T_INT, 0)),
         		new PSymbolInstance(I_POP, new DataValue(T_INT, 0)));
 
-        ralambda.addCounterexample(new DefaultQuery<>(ce, sul.accepts(ce)));
+        ralambda.refineHypothesis(new DefaultQuery<>(ce, sul.accepts(ce)));
 
-        ralambda.learn();
-        hyp = ralambda.getHypothesis();
+        hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "HYP2: {0}", hyp);
 
         ce = Word.fromSymbols(
@@ -156,9 +152,8 @@ public class LearnStackTest extends RaLibTestSuite {
         		new PSymbolInstance(I_PUSH, new DataValue(T_INT, 1)),
         		new PSymbolInstance(I_POP, new DataValue(T_INT, 1)));
 
-        ralambda.addCounterexample(new DefaultQuery<>(ce, sul.accepts(ce)));
-        ralambda.learn();
-        hyp = ralambda.getHypothesis();
+        ralambda.refineHypothesis(new DefaultQuery<>(ce, sul.accepts(ce)));
+        hyp = ralambda.getHypothesisModel();
 
         Collection<SymbolicSuffix> suffixes = ralambda.getDT().getSuffixes();
         Set<Word<ParameterizedSymbol>> suffixActions = suffixes.stream().map(s -> s.getActions()).collect(Collectors.toSet());
@@ -197,10 +192,10 @@ public class LearnStackTest extends RaLibTestSuite {
         RaLambda ralambda = new RaLambda(mto, hypFactory, slo, consts, false, false, I_PUSH, I_POP);
         ralambda.setSolver(solver);
 
-        ralambda.learn();
-        RegisterAutomaton hyp = ralambda.getHypothesis();
+        ralambda.startLearning();
+        RegisterAutomaton hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "HYP0: {0}", hyp);
-        hyp = ralambda.getHypothesis();
+        hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "HYP1: {0}", hyp);
 
         Word<PSymbolInstance> ce = Word.fromSymbols(
@@ -210,10 +205,9 @@ public class LearnStackTest extends RaLibTestSuite {
                 new PSymbolInstance(I_POP, new DataValue(T_INT, 0))
                 );
 
-        ralambda.addCounterexample(new DefaultQuery<>(ce, sul.accepts(ce)));
+        ralambda.refineHypothesis(new DefaultQuery<>(ce, sul.accepts(ce)));
 
-        ralambda.learn();
-        hyp = ralambda.getHypothesis();
+        hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "HYP2: {0}", hyp);
 
         Assert.assertTrue(hyp.accepts(ce));

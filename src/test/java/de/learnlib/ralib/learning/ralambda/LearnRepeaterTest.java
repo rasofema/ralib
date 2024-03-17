@@ -68,7 +68,7 @@ public class LearnRepeaterTest extends RaLibTestSuite {
         learner.setStatisticCounter(queryStats);
         learner.setSolver(solver);
 
-        learner.learn();
+        learner.startLearning();
 
         Repeater repeater = new Repeater();
         Assert.assertEquals(repeater.repeat(0), (Integer)0);
@@ -83,11 +83,10 @@ public class LearnRepeaterTest extends RaLibTestSuite {
         		new PSymbolInstance(IPUT, new DataValue(TINT, 0)),
         		new PSymbolInstance(OECHO, new DataValue(TINT, 0)));
 
-        learner.addCounterexample(new DefaultQuery<PSymbolInstance, Boolean>(ce, false));
+        learner.refineHypothesis(new DefaultQuery<>(ce, false));
 
-        learner.learn();
 
-        System.out.println(queryStats.toString());
+        System.out.println(queryStats);
 
         Assert.assertTrue(true);
 	}

@@ -295,11 +295,11 @@ public class IOSimulator extends AbstractToolWithRandomWalk {
         QueryStatistics queryStats = rastar.getQueryStatistics();
 
         int rounds = 0;
+        rastar.startLearning();
         while (maxRounds < 0 || rounds < maxRounds) {
 
             rounds++;
-            rastar.learn();
-            hyp = rastar.getHypothesis();
+            hyp = (Hypothesis) rastar.getHypothesisModel();
             System.out.println("HYP:------------------------------------------------");
             System.out.println(hyp);
             System.out.println("----------------------------------------------------");
@@ -367,7 +367,7 @@ public class IOSimulator extends AbstractToolWithRandomWalk {
             assert model.accepts(ce.getInput());
             assert !hyp.accepts(ce.getInput());
 
-            rastar.addCounterexample(ce);
+            rastar.refineHypothesis(ce);
         }
 
         System.out.println("=============================== STOP ===============================");

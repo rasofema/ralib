@@ -94,7 +94,7 @@ public class TestDistinguishingSuffixOptimization {
         RaLambda learner = new RaLambda(mto, hypFactory, slo, consts, false, false, A, B);
         learner.setSolver(solver);
 
-        learner.learn();
+        learner.startLearning();
 
         Word<PSymbolInstance> ce = Word.fromSymbols(
         		new PSymbolInstance(A),
@@ -102,8 +102,7 @@ public class TestDistinguishingSuffixOptimization {
         		new PSymbolInstance(A),
         		new PSymbolInstance(A));
 
-        learner.addCounterexample(new DefaultQuery<>(ce, false));
-        learner.learn();
+        learner.refineHypothesis(new DefaultQuery<>(ce, false));
 
         ce = Word.fromSymbols(
         		new PSymbolInstance(B),
@@ -111,8 +110,7 @@ public class TestDistinguishingSuffixOptimization {
         		new PSymbolInstance(A),
         		new PSymbolInstance(A),
         		new PSymbolInstance(A));
-        learner.addCounterexample(new DefaultQuery<>(ce, true));
-        learner.learn();
+        learner.refineHypothesis(new DefaultQuery<>(ce, true));
 
         SymbolicSuffix suffixUnoptimized = new SymbolicSuffix(Word.epsilon(), Word.fromSymbols(
         		new PSymbolInstance(A),

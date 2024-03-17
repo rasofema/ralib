@@ -121,8 +121,8 @@ public class LearnPadlock extends RaLibTestSuite {
         RaLambda ralambda = new RaLambda(mto, hypFactory, slo, consts, false, false, true, IN);
         ralambda.setSolver(solver);
 
-        ralambda.learn();
-        RegisterAutomaton hyp = ralambda.getHypothesis();
+        ralambda.startLearning();
+        RegisterAutomaton hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "HYP0: {0}", hyp);
 
         Word<PSymbolInstance> ce = Word.fromSymbols(
@@ -131,10 +131,10 @@ public class LearnPadlock extends RaLibTestSuite {
                 new PSymbolInstance(IN, new DataValue<>(DIGIT, 0)),
                 new PSymbolInstance(IN, new DataValue<>(DIGIT, 0)));
 
-        ralambda.addCounterexample(new DefaultQuery<>(ce, sul.accepts(ce)));
+        ralambda.refineHypothesis(new DefaultQuery<>(ce, sul.accepts(ce)));
 
-        ralambda.learn();
-        hyp = ralambda.getHypothesis();
+        ralambda.startLearning();
+        hyp = ralambda.getHypothesisModel();
         logger.log(Level.FINE, "HYP1: {0}", hyp);
 
     }
