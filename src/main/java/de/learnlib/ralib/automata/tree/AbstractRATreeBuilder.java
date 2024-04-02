@@ -84,9 +84,8 @@ abstract class AbstractRATreeBuilder implements RABuilder {
                 continue;
             }
             PSymbolInstance input = rec.inputIt.next();
-            int inputIdx = inputAlphabet.getSymbolIndex(input);
 
-            Node succ = rec.treeNode.getChild(inputIdx);
+            Node succ = rec.treeNode.getChild(input);
             if (succ == null) {
                 continue;
             }
@@ -121,8 +120,7 @@ abstract class AbstractRATreeBuilder implements RABuilder {
         Node curr = root;
 
         for (PSymbolInstance sym : inputWord) {
-            int symIdx = inputAlphabet.getSymbolIndex(sym);
-            Node succ = curr.getChild(symIdx);
+            Node succ = curr.getChild(sym);
             if (succ == null) {
                 return Pair.of(false, null);
             }
@@ -167,8 +165,7 @@ abstract class AbstractRATreeBuilder implements RABuilder {
 
         @Override
         public @Nullable Node getTransition(Node state, PSymbolInstance input) {
-            int inputIdx = inputAlphabet.getSymbolIndex(input);
-            return state.getChild(inputIdx);
+            return state.getChild(input);
         }
 
         @Override
@@ -211,8 +208,7 @@ abstract class AbstractRATreeBuilder implements RABuilder {
 
         @Override
         public @Nullable Node getTransition(Node state, PSymbolInstance input) {
-            int inputIdx = inputAlphabet.getSymbolIndex(input);
-            return state.getChild(inputIdx);
+            return state.getChild(input);
         }
 
         @Override

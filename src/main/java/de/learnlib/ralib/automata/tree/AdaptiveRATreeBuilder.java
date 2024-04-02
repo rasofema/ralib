@@ -26,6 +26,7 @@ import de.learnlib.ralib.automata.RegisterAutomaton;
 import de.learnlib.ralib.words.PSymbolInstance;
 import net.automatalib.alphabet.Alphabet;
 import net.automatalib.incremental.AdaptiveConstruction;
+import net.automatalib.incremental.CexOrigin;
 import net.automatalib.incremental.dfa.Acceptance;
 import net.automatalib.util.graph.traversal.GraphTraversal;
 import net.automatalib.word.Word;
@@ -33,28 +34,25 @@ import net.automatalib.word.Word;
 public class AdaptiveRATreeBuilder extends AbstractAlphabetBasedRATreeBuilder
         implements AdaptiveConstruction<RegisterAutomaton, PSymbolInstance, Boolean>, RABuilder {
     private final Map<Node, Word<PSymbolInstance>> nodeToQuery;
+
     public AdaptiveRATreeBuilder(Alphabet<PSymbolInstance> inputAlphabet) {
         super(inputAlphabet);
         this.nodeToQuery = new LinkedHashMap<>();
     }
 
-    @Override
-    public boolean insert(Word<? extends PSymbolInstance> word, Boolean acceptance) {
+    private boolean insert(Word<? extends PSymbolInstance> word, Boolean acceptance, CexOrigin origin) {
         Node prev = null;
-        int childIndex = -1;
         PSymbolInstance childInput = null;
         Node curr = root;
         boolean hasOverwritten = false;
 
         for (PSymbolInstance sym : word) {
-            int inputIdx = getInputIndex(sym);
-            Node succ = curr.getChild(inputIdx);
+            Node succ = curr.getChild(sym);
             if (succ == null) {
                 succ = new Node();
-                curr.setChild(inputIdx, getInputAlphabetSize(), succ);
+                curr.setChild(sym, succ);
             }
             prev = curr;
-            childIndex = inputIdx;
             childInput = sym;
             curr = succ;
         }
@@ -66,11 +64,19 @@ public class AdaptiveRATreeBuilder extends AbstractAlphabetBasedRATreeBuilder
         if (acc == Acceptance.DONT_KNOW) {
             curr.setAcceptance(newWordAcc);
         } else if (acc != newWordAcc) {
-            hasOverwritten = true;
-            removeQueries(curr);
-            if (prev != null) {
-                prev.setChild(childIndex, getInputAlphabetSize(), null);
-                curr = insertNode(prev, childInput, acceptance);
+//          Only update if from same origin or, otherwise, origin of curr is not user
+            if (origin == curr.getOrigin() || curr.getOrigin() != CexOrigin.USER) {
+                hasOverwritten = true;
+                removeQueries(curr);
+                if (prev == null) {
+                    assert word.isEmpty();
+                    root.setAcceptance(newWordAcc);
+                    root.setOrigin(origin);
+                } else {
+                    prev.setChild(childInput, null);
+                    curr = insertNode(prev, childInput, acceptance);
+                    curr.setOrigin(origin);
+                }
             }
         }
 
@@ -79,6 +85,16 @@ public class AdaptiveRATreeBuilder extends AbstractAlphabetBasedRATreeBuilder
         nodeToQuery.put(curr, Word.upcast(word));
 
         return hasOverwritten;
+    }
+
+    @Override
+    public boolean insert(Word<? extends PSymbolInstance> word, Boolean acceptance) {
+        return insert(word, acceptance, CexOrigin.SUL);
+    }
+
+    @Override
+    public boolean insertFromUser(Word<? extends PSymbolInstance> word, Boolean acceptance) {
+        return insert(word, acceptance, CexOrigin.USER);
     }
 
 

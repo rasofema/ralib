@@ -15,9 +15,13 @@
  */
 package de.learnlib.ralib.automata.tree;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-import net.automatalib.common.util.array.ResizingArrayStorage;
+import de.learnlib.ralib.words.PSymbolInstance;
+import net.automatalib.incremental.CexOrigin;
 import net.automatalib.incremental.dfa.Acceptance;
 import net.automatalib.incremental.dfa.tree.IncrementalDFATreeBuilder;
 
@@ -27,13 +31,16 @@ import net.automatalib.incremental.dfa.tree.IncrementalDFATreeBuilder;
 final class Node {
 
     private Acceptance acceptance;
-    private @Nullable ResizingArrayStorage<Node> children;
+    private Map<PSymbolInstance,Node> children;
+
+    private CexOrigin origin;
 
     /**
      * Constructor. Constructs a new node with no children and an acceptance value of {@link Acceptance#DONT_KNOW}
      */
     Node() {
         this(Acceptance.DONT_KNOW);
+        this.origin = CexOrigin.UNKNOWN;
     }
 
     /**
@@ -65,49 +72,40 @@ final class Node {
         this.acceptance = acceptance;
     }
 
+    public CexOrigin getOrigin() {
+        return this.origin;
+    }
+
+    public void setOrigin(CexOrigin origin) {
+        this.origin = origin;
+    }
+
     /**
      * Retrieves, for a given index, the respective child of this node.
      *
-     * @param idx
-     *         the alphabet symbol index
-     *
      * @return the child for the given index, or {@code null} if there is no such child
      */
-    @Nullable Node getChild(int idx) {
+    @Nullable Node getChild(PSymbolInstance input) {
         if (children == null) {
             return null;
         }
-        return children.array[idx];
+        return children.get(input);
     }
 
     /**
      * Sets the child for a given index.
-     *
-     * @param idx
-     *         the alphabet symbol index
-     * @param alphabetSize
-     *         the overall alphabet size; this is needed if a new children array needs to be created
      * @param child
      *         the new child
      */
-    void setChild(int idx, int alphabetSize, Node child) {
+    void setChild(PSymbolInstance input, Node child) {
         if (children == null) {
-            children = new ResizingArrayStorage<>(Node.class, alphabetSize);
+            children = new HashMap<>();
         }
-        children.array[idx] = child;
+        children.put(input, child);
     }
 
     void makeSink() {
         children = null;
         acceptance = Acceptance.FALSE;
-    }
-
-    /**
-     * See {@link ResizingArrayStorage#ensureCapacity(int)}.
-     */
-    void ensureInputCapacity(int capacity) {
-        if (this.children != null) {
-            this.children.ensureCapacity(capacity);
-        }
     }
 }

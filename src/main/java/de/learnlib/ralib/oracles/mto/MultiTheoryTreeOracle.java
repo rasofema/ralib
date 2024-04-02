@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.learnlib.logging.Category;
+import de.learnlib.oracle.MembershipOracle;
 import de.learnlib.query.DefaultQuery;
 import de.learnlib.ralib.automata.guards.FalseGuardExpression;
 import de.learnlib.ralib.automata.guards.GuardExpression;
@@ -50,7 +51,6 @@ import de.learnlib.ralib.data.util.SymbolicDataValueGenerator.SuffixValueGenerat
 import de.learnlib.ralib.learning.SymbolicDecisionTree;
 import de.learnlib.ralib.learning.SymbolicSuffix;
 import de.learnlib.ralib.oracles.Branching;
-import de.learnlib.ralib.oracles.DataWordOracle;
 import de.learnlib.ralib.oracles.TreeOracle;
 import de.learnlib.ralib.oracles.TreeQueryResult;
 import de.learnlib.ralib.oracles.mto.MultiTheoryBranching.Node;
@@ -72,7 +72,7 @@ import net.automatalib.word.Word;
  */
 public class MultiTheoryTreeOracle implements TreeOracle, SDTConstructor {
 
-    private final DataWordOracle oracle;
+    private final MembershipOracle<PSymbolInstance, Boolean> oracle;
 
     private final Constants constants;
 
@@ -82,7 +82,7 @@ public class MultiTheoryTreeOracle implements TreeOracle, SDTConstructor {
 
     private static Logger LOGGER = LoggerFactory.getLogger(MultiTheoryTreeOracle.class);
 
-    public MultiTheoryTreeOracle(DataWordOracle oracle, Map<DataType, Theory> teachers, Constants constants,
+    public MultiTheoryTreeOracle(MembershipOracle<PSymbolInstance, Boolean> oracle, Map<DataType, Theory> teachers, Constants constants,
             ConstraintSolver solver) {
         this.oracle = oracle;
         this.teachers = teachers;

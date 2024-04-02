@@ -29,35 +29,16 @@ abstract class AbstractAlphabetBasedRATreeBuilder extends AbstractRATreeBuilder
         implements InputAlphabetHolder<PSymbolInstance> {
 
     private final Alphabet<PSymbolInstance> inputAlphabet;
-    private int alphabetSize;
 
     AbstractAlphabetBasedRATreeBuilder(Alphabet<PSymbolInstance> inputAlphabet) {
         super(new Node(), inputAlphabet);
         this.inputAlphabet = inputAlphabet;
-        this.alphabetSize = inputAlphabet.size();
     }
 
     @Override
     public void addAlphabetSymbol(PSymbolInstance symbol) {
         if (!inputAlphabet.containsSymbol(symbol)) {
             inputAlphabet.asGrowingAlphabetOrThrowException().addSymbol(symbol);
-        }
-
-        final int newAlphabetSize = inputAlphabet.size();
-        // even if the symbol was already in the alphabet, we need to make sure to be able to store the new symbol
-        if (alphabetSize < newAlphabetSize) {
-            ensureInputCapacity(root, alphabetSize, newAlphabetSize);
-            alphabetSize = newAlphabetSize;
-        }
-    }
-
-    private void ensureInputCapacity(Node node, int oldAlphabetSize, int newAlphabetSize) {
-        node.ensureInputCapacity(newAlphabetSize);
-        for (int i = 0; i < oldAlphabetSize; i++) {
-            final Node child = node.getChild(i);
-            if (child != null) {
-                ensureInputCapacity(child, oldAlphabetSize, newAlphabetSize);
-            }
         }
     }
 
@@ -69,21 +50,13 @@ abstract class AbstractAlphabetBasedRATreeBuilder extends AbstractRATreeBuilder
     @Override
     Node insertNode(Node parent, PSymbolInstance symIdx, Boolean accept) {
         Node succ = new Node(Acceptance.fromBoolean(accept));
-        parent.setChild(inputAlphabet.getSymbolIndex(symIdx), alphabetSize, succ);
+        parent.setChild(symIdx, succ);
         return succ;
     }
 
     @Override
     public Alphabet<PSymbolInstance> getInputAlphabet() {
         return inputAlphabet;
-    }
-
-    public int getInputAlphabetSize() {
-        return inputAlphabet.size();
-    }
-
-    public int getInputIndex(PSymbolInstance sym) {
-        return inputAlphabet.getSymbolIndex(sym);
     }
 
     @Override
