@@ -55,7 +55,6 @@ import de.learnlib.ralib.data.util.SymbolicDataValueGenerator.ParameterGenerator
 import de.learnlib.ralib.data.util.SymbolicDataValueGenerator.RegisterGenerator;
 import de.learnlib.ralib.words.InputSymbol;
 import de.learnlib.ralib.words.OutputSymbol;
-import de.learnlib.ralib.words.PSymbolInstance;
 import de.learnlib.ralib.words.ParameterizedSymbol;
 import net.automatalib.alphabet.Alphabet;
 import net.automatalib.alphabet.impl.GrowingMapAlphabet;
@@ -224,7 +223,7 @@ public class RegisterAutomatonImporter {
 
                 OutputTransition tOut = new OutputTransition(p, outMap,
                         (OutputSymbol) ps, from, to, assign);
-                iora.addTransition(from, new PSymbolInstance(ps), tOut);
+                iora.addTransition(from, ps, tOut);
                 LOGGER.trace(Category.EVENT, "Loading: {}", tOut);
             } // input
             else {
@@ -234,7 +233,7 @@ public class RegisterAutomatonImporter {
                 InputTransition tIn = new InputTransition(p, (InputSymbol) ps,
                         from, to, assign);
                 LOGGER.trace(Category.EVENT, "Loading: {}", tIn);
-                iora.addTransition(from, new PSymbolInstance(ps), tIn);
+                iora.addTransition(from, ps, tIn);
             }
         }
     }
