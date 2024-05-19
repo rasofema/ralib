@@ -39,7 +39,7 @@ import net.automatalib.word.Word;
  * @author falk
  */
 public class MutableRegisterAutomaton extends RegisterAutomaton
-        implements MutableDeterministic<RALocation, ParameterizedSymbol, Transition, Boolean, Void> {
+        implements MutableDeterministic<RALocation, PSymbolInstance, Transition, Boolean, Void> {
 
     protected final Constants constants;
 
@@ -68,14 +68,14 @@ public class MutableRegisterAutomaton extends RegisterAutomaton
     }
 
     @Override
-    public Transition getTransition(RALocation s, ParameterizedSymbol i) {
+    public Transition getTransition(RALocation s, PSymbolInstance i) {
         throw new UnsupportedOperationException(
                 "There may be more than one transition per symbol in an RA.");
     }
 
     @Override
-    public Collection<Transition> getTransitions(RALocation s, ParameterizedSymbol i) {
-        return s.getOut(i);
+    public Collection<Transition> getTransitions(RALocation s, PSymbolInstance i) {
+        return s.getOut(i.getBaseSymbol());
     }
 
     @Override
@@ -180,12 +180,12 @@ public class MutableRegisterAutomaton extends RegisterAutomaton
     }
 
     @Override
-    public void setTransition(RALocation s, ParameterizedSymbol i, Transition t) {
+    public void setTransition(RALocation s, PSymbolInstance i, Transition t) {
         s.addOut(t);
     }
 
     @Override
-    public void setTransition(RALocation s, ParameterizedSymbol i, RALocation s1, Void tp) {
+    public void setTransition(RALocation s, PSymbolInstance i, RALocation s1, Void tp) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -254,33 +254,37 @@ public class MutableRegisterAutomaton extends RegisterAutomaton
                 "Unsupported: A RA can have input and output transitions.");
     }
 
-    @Override
     public void addTransition(RALocation s, ParameterizedSymbol i, Transition t) {
+        this.addTransition(s, new PSymbolInstance(i), t);
+    }
+
+    @Override
+    public void addTransition(RALocation s, PSymbolInstance i, Transition t) {
         s.addOut(t);
     }
 
     @Override
-    public void addTransitions(RALocation s, ParameterizedSymbol i, Collection<? extends Transition> clctn) {
+    public void addTransitions(RALocation s, PSymbolInstance i, Collection<? extends Transition> clctn) {
         for (Transition t : clctn) {
             addTransition(s, i, t);
         }
     }
 
     @Override
-    public void setTransitions(RALocation s, ParameterizedSymbol i, Collection<? extends Transition> clctn) {
+    public void setTransitions(RALocation s, PSymbolInstance i, Collection<? extends Transition> clctn) {
         for (Transition t : clctn) {
             addTransition(s, i, t);
         }
     }
 
     @Override
-    public void removeTransition(RALocation s, ParameterizedSymbol i, Transition t) {
-        s.getOut(i).remove(t);
+    public void removeTransition(RALocation s, PSymbolInstance i, Transition t) {
+        s.getOut(i.getBaseSymbol()).remove(t);
     }
 
     @Override
-    public void removeAllTransitions(RALocation s, ParameterizedSymbol i) {
-        Collection<Transition> cltn = s.getOut(i);
+    public void removeAllTransitions(RALocation s, PSymbolInstance i) {
+        Collection<Transition> cltn = s.getOut(i.getBaseSymbol());
         if (cltn != null) {
             cltn.clear();
         }
@@ -292,7 +296,7 @@ public class MutableRegisterAutomaton extends RegisterAutomaton
     }
 
     @Override
-    public Transition addTransition(RALocation s, ParameterizedSymbol i, RALocation s1, Void tp) {
+    public Transition addTransition(RALocation s, PSymbolInstance i, RALocation s1, Void tp) {
         throw new UnsupportedOperationException(
                 "More information needed for a transition of a RA");
     }
@@ -302,11 +306,9 @@ public class MutableRegisterAutomaton extends RegisterAutomaton
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
     @Override
     public Boolean computeOutput(Iterable<? extends PSymbolInstance> input) {
         return accepts(Word.fromList(StreamSupport.stream(input.spliterator(), false)
                 .collect(Collectors.toList())));
     }
-
 }

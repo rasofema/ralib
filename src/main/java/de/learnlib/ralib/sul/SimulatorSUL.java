@@ -95,7 +95,7 @@ public class SimulatorSUL extends DataWordSUL {
         prefix = prefix.append(i);
 
         boolean found = false;
-        for (Transition t : this.model.getTransitions(loc, i.getBaseSymbol())) {
+        for (Transition t : this.model.getTransitions(loc, i)) {
             ParValuation pval = new ParValuation(i);
             if (t.isEnabled(register, pval, consts)) {
                 found = true;

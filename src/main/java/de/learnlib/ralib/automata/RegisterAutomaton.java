@@ -26,7 +26,6 @@ import de.learnlib.ralib.automata.output.OutputTransition;
 import de.learnlib.ralib.data.SymbolicDataValue.Register;
 import de.learnlib.ralib.data.VarValuation;
 import de.learnlib.ralib.words.PSymbolInstance;
-import de.learnlib.ralib.words.ParameterizedSymbol;
 import net.automatalib.automaton.DeterministicAutomaton;
 import net.automatalib.automaton.concept.Output;
 import net.automatalib.word.Word;
@@ -36,7 +35,7 @@ import net.automatalib.word.Word;
  * @author falk
  */
 public abstract class RegisterAutomaton
-        implements DeterministicAutomaton<RALocation, ParameterizedSymbol, Transition>,
+        implements DeterministicAutomaton<RALocation, PSymbolInstance, Transition>,
         Output<PSymbolInstance, Boolean> {
 
     private final VarValuation initialRegisters;
