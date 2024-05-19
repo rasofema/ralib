@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import de.learnlib.ralib.data.Constants;
 import de.learnlib.ralib.data.ParValuation;
@@ -298,6 +300,13 @@ public class MutableRegisterAutomaton extends RegisterAutomaton
     @Override
     public Transition copyTransition(Transition t, RALocation s) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+
+    @Override
+    public Boolean computeOutput(Iterable<? extends PSymbolInstance> input) {
+        return accepts(Word.fromList(StreamSupport.stream(input.spliterator(), false)
+                .collect(Collectors.toList())));
     }
 
 }
