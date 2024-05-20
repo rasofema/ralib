@@ -34,7 +34,7 @@ public class AdaptativeRATreeBuilderTest {
         Assert.assertFalse(adaptiveRA.lookup(WB).getSecond());
 
 
-        Assert.assertTrue(adaptiveRA.insert(WB, true));
+        Assert.assertTrue(adaptiveRA.insertFromUser(WB, true));
 //      WE:F - WA:T - WB:T
         Assert.assertFalse(adaptiveRA.lookup(WE).getSecond());
         Assert.assertTrue(adaptiveRA.lookup(WA).getSecond());

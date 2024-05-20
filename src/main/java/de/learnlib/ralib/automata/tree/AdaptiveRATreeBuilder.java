@@ -63,21 +63,12 @@ public class AdaptiveRATreeBuilder extends AbstractAlphabetBasedRATreeBuilder
         Acceptance newWordAcc = Acceptance.fromBoolean(acceptance);
         if (acc == Acceptance.DONT_KNOW) {
             curr.setAcceptance(newWordAcc);
-        } else if (acc != newWordAcc) {
-//          Only update if from same origin or, otherwise, origin of curr is not user
-            if (origin == curr.getOrigin() || curr.getOrigin() != CexOrigin.USER) {
-                hasOverwritten = true;
-                removeQueries(curr);
-                if (prev == null) {
-                    assert word.isEmpty();
-                    root.setAcceptance(newWordAcc);
-                    root.setOrigin(origin);
-                } else {
-                    prev.setChild(childInput, null);
-                    curr = insertNode(prev, childInput, acceptance);
-                    curr.setOrigin(origin);
-                }
-            }
+            curr.setOrigin(origin);
+//      Only update if from same origin or, otherwise, origin of curr is not user
+        } else if (acc != newWordAcc && (origin == curr.getOrigin() || curr.getOrigin() != CexOrigin.USER)) {
+            hasOverwritten = true;
+            curr.setAcceptance(newWordAcc);
+            curr.setOrigin(origin);
         }
 
         // Make sure it uses the new ages.
