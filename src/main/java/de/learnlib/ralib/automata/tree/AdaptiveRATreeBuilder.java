@@ -41,8 +41,6 @@ public class AdaptiveRATreeBuilder extends AbstractAlphabetBasedRATreeBuilder
     }
 
     private boolean insert(Word<? extends PSymbolInstance> word, Boolean acceptance, CexOrigin origin) {
-        Node prev = null;
-        PSymbolInstance childInput = null;
         Node curr = root;
         boolean hasOverwritten = false;
 
@@ -52,8 +50,6 @@ public class AdaptiveRATreeBuilder extends AbstractAlphabetBasedRATreeBuilder
                 succ = new Node();
                 curr.setChild(sym, succ);
             }
-            prev = curr;
-            childInput = sym;
             curr = succ;
         }
 
